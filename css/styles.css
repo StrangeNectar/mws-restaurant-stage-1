@@ -48,6 +48,37 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   text-align: center;
   text-transform: uppercase;
 }
+
+/* ====================== GLOBAL FLEX STYLESn ====================== */
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+/* PERFECT CENTERING */
+.flex-parent {
+    display: flex;
+}
+.flex-child {
+    margin: auto;
+}
+/* ====================== Media Queries  ====================== */
+@media screen and (min-width: 360px) and (max-width: 750px) {
+   #restaurants-list li a h1 p {
+       text-align: center;
+   } 
+   #restaurants-list li {
+        margin: 5px;
+   }
+   #restaurants-list a {
+        width: 80%;
+   }
+   .filter-options {
+        height: 20vh;
+   }
+   
+}
+
 /* ====================== Navigation ====================== */
 nav {
   width: 100%;
