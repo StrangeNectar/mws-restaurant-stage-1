@@ -62,6 +62,10 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 .flex-child {
     margin: auto;
 }
+.fluid__container {
+    width: 100%;
+    height: auto;
+}
 /* ====================== Media Queries  ====================== */
 @media screen and (min-width: 360px) and (max-width: 750px) {
    #restaurants-list li a h1 p {
@@ -75,6 +79,14 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
    }
    .filter-options {
         height: 20vh;
+   }
+   #restaurant-container {
+    width: 100%!important;
+    overflow: hidden;
+   }
+   #map-container {
+    width: 100%!important;
+    overflow: hidden;
    }
    
 }
@@ -235,8 +247,8 @@ nav h1 a {
 }
 .inside #footer {
   bottom: 0;
-  position: absolute;
-  width: 50%;
+  position: fixed;
+  width: 100%;
 }
 #restaurant-name {
   color: #f18200;
