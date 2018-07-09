@@ -177,8 +177,10 @@ createRestaurantHTML = (restaurant) => {
   li.append(address);
 
   const more = document.createElement('a');
+  let ariaLabelForButton = DBHelper.ariaLabelForRestaurantButton(restaurant);
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
+  more.setAttribute('aria-label', ariaLabelForButton);
   li.append(more)
 
   return li

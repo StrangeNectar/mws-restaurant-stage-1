@@ -159,6 +159,12 @@ class DBHelper {
   static imageAltTextForRestaurant(restaurant) {
     return (`${restaurant.name}`)
   }
+  /**
+   *  Restaurant aria-label for buttons
+   */
+   static ariaLabelForRestaurantButton(restaurant) {
+    return (`View Details of ${restaurant.name} restaurant`)
+   }
 
   /**
    * Map marker for a restaurant.
