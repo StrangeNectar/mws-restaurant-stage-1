@@ -15,7 +15,7 @@ let CACHE_URLS = [
     '/js/dbhelper.js',
     '/js/main.js',
     '/js/restaurant_info.js',
-    '/js/sw/index.js'
+    '/js/sw/index.js',
     '/index.html',
     '/restaurant.html',
     '/sw.js'
