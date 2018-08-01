@@ -15,18 +15,23 @@ class DBHelper {
   /**
    * Fetch all restaurants.
    */
-  static fetchRestauranz(callback) {
+  static fetchRestaurants() {
+    // Grab the DB URL
     let DB_URL = DBHelper.DATABASE_URL;
-    fetch(DB_URL, {
-      // Make a post request here  
-    })
-    .then(response => response.json())
-    .then(parseRestaurantData)
-    .then(storeRestaurantData)
-    .catch(err => requestError(err, 'json'));
+    
+    // Make the fetch request
+    fetch(DB_URL)
+      .then(function(response) {
+        if(response.ok) {
+          return response.json();
+        }
+        throw new Error('The API fetch request did not go through!');
+      }).then(function(JSON) {
+        const restaurants = JSON.restaurants;
+      }).catch(err => requestError(err, 'json')); // If something bad happened tell me about it
   }
 
-  static fetchRestaurants(callback) {
+  static fetchRestaurant(callback) {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
