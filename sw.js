@@ -1,7 +1,6 @@
-let CACHE_NAME = 'mws-restaurant-stage-v1';
+let CACHE_NAME = 'mws-restaurant-stage-v2';
 let CACHE_URLS = [
     '/css/styles.css',
-    '/data/restaurants.json',
     '/img/1.jpg',
     '/img/10.jpg',
     '/img/2.jpg',

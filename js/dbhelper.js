@@ -23,37 +23,23 @@ class DBHelper {
      fetch(DB_URL) 
       .then(
         function(response) {
-        if (response.status !== 200) {
-          console.log('Looks like there was a problem. Status Code: ' + response.status);  //if we failed let us know
-          return;
-        }
+          if (response.status !== 200) {
+            console.log('Looks like there was a problem. Status Code: ' + response.status);  //if we failed let us know
+            return;
+            callback(error, null);
+          }
 
         // Examine the text in the response
         response.json().then(function(data) { // otherwise lets settle up with this data
           const restaurants = data;
           console.log(restaurants);
+          callback(null, restaurants);
         });
       }
     )
     .catch(function(err) {
       console.log('Fetch Error :-S', err);
     });
-  }
-
-  static fetchRestaurant(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
   }
 
   /**
