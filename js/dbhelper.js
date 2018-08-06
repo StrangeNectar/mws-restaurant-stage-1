@@ -9,26 +9,35 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${ port }/restaurants`;
   }
 
   /**
    * Fetch all restaurants.
    */
-  static fetchRestaurants() {
-    // Grab the DB URL
-    let DB_URL = DBHelper.DATABASE_URL;
-    
-    // Make the fetch request
-    fetch(DB_URL)
-      .then(function(response) {
-        if(response.ok) {
-          return response.json();
+  static fetchRestaurants(callback) {
+      // Grab the DB URL
+      let DB_URL = DBHelper.DATABASE_URL;
+     
+     // Make the fetch request
+     fetch(DB_URL) 
+      .then(
+        function(response) {
+        if (response.status !== 200) {
+          console.log('Looks like there was a problem. Status Code: ' + response.status);  //if we failed let us know
+          return;
         }
-        throw new Error('The API fetch request did not go through!');
-      }).then(function(JSON) {
-        const restaurants = JSON.restaurants;
-      }).catch(err => requestError(err, 'json')); // If something bad happened tell me about it
+
+        // Examine the text in the response
+        response.json().then(function(data) { // otherwise lets settle up with this data
+          const restaurants = data;
+          console.log(restaurants);
+        });
+      }
+    )
+    .catch(function(err) {
+      console.log('Fetch Error :-S', err);
+    });
   }
 
   static fetchRestaurant(callback) {
