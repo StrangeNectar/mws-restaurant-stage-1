@@ -1,4 +1,4 @@
-let CACHE_NAME = 'mws-restaurant-stage-v2';
+let CACHE_NAME = 'mws-restaurant-stage-v3';
 let CACHE_URLS = [
     '/css/styles.css',
     '/img/1.jpg',
@@ -50,7 +50,7 @@ self.addEventListener('activate', function(event){
     let cacheWhitelist = ['mws-restaurant-stage-v1', 'mws-restaurant-stage-v2'];
 
     event.waitUntil(
-        caches.keys().the(function(cacheNames){
+        caches.keys().then(function(cacheNames){
             return Promise.all(
                 cacheNames.map(function(cacheName){
                     if(cacheWhitelist.indexOf(cacheName)) {
