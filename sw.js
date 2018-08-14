@@ -1,64 +1,76 @@
-let CACHE_NAME = 'mws-restaurant-stage-v3';
-let CACHE_URLS = [
-    '/css/styles.css',
-    '/img/1.jpg',
-    '/img/10.jpg',
-    '/img/2.jpg',
-    '/img/3.jpg',
-    '/img/4.jpg',
-    '/img/5.jpg',
-    '/img/6.jpg',
-    '/img/7.jpg',
-    '/img/8.jpg',
-    '/img/9.jpg',
-    '/js/dbhelper.js',
-    '/js/main.js',
-    '/js/restaurant_info.js',
-    '/js/sw/index.js',
-    '/index.html',
-    '/restaurant.html',
-    '/sw.js'
-]
+var CACHE_NAME = 'mws-restaurant-cache-v4';
+var urlsToCache = [
+  'img/*.jpg',
+  'css/styles.css',
+  'js/*.js',
+	'index.html',
+	'restaurant.html'
+];
 
-// Listens for the initial install of the webpage.
-// Here is where we will cache everything for the convenience of the offline user
 self.addEventListener('install', function(event) {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(function(cache) {
-            return cache.addAll([CACHE_URLS]);
-        })
-    );
+  // Perform install steps
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
 });
 
-// Now that we have cached what we want, lets go ahead and send it out when need be
 self.addEventListener('fetch', function(event) {
-    event.respondWith(
-        caches.match(event.request)
-            .then(function(res){
-                if(res) {
-                    return response;
-                }
-                return fetch(event.request);
+  event.respondWith(
+    caches.match(event.request)
+      .then(function(response) {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+
+        // IMPORTANT: Clone the request. A request is a stream and
+        // can only be consumed once. Since we are consuming this
+        // once by cache and once by the browser for fetch, we need
+        // to clone the response.
+        var fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then(
+          function(response) {
+            // Check if we received a valid response
+            if(!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
             }
-        )
+
+            // IMPORTANT: Clone the response. A response is a stream
+            // and because we want the browser to consume the response
+            // as well as the cache consuming the response, we need
+            // to clone it so we have two streams.
+            var responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(function(cache) {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
+      })
     );
 });
 
-// Now we need to delete the previous cache and replace it with the updated proper cache
-// This will happen upon the service worker becoming instantiated
-self.addEventListener('activate', function(event){
-    let cacheWhitelist = ['mws-restaurant-stage-v1', 'mws-restaurant-stage-v2'];
+self.addEventListener('activate', function(event) {
 
-    event.waitUntil(
-        caches.keys().then(function(cacheNames){
-            return Promise.all(
-                cacheNames.map(function(cacheName){
-                    if(cacheWhitelist.indexOf(cacheName)) {
-                        return caches.delete(cacheName);
-                    }
-                })        
-            );
-        })        
-    );
+  var cacheWhitelist = ['mws-restaurant-cache-v1', 'mws-restaurant-cache-v4'];
+
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
-
