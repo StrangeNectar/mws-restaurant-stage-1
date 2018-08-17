@@ -1,10 +1,24 @@
-var CACHE_NAME = 'mws-restaurant-cache-v4';
+var CACHE_NAME = 'mws-restaurant-cache-v1';
 var urlsToCache = [
-  'img/*.jpg',
-  'css/styles.css',
-  'js/*.js',
-	'index.html',
-	'restaurant.html'
+    '/',
+    '/css/styles.css',
+    '/js/sw/index.js',
+    '/js/bg-idb.js',
+    '/js/dbhelper.js',
+    '/js/main.js',
+    '/js/restaurant_info.js',
+    'index.html',
+    'restaurant.html',
+    '/img/1.jpg',
+    '/img/2.jpg',
+    '/img/3.jpg',
+    '/img/4.jpg', 
+    '/img/5.jpg',
+    '/img/6.jpg',
+    '/img/7.jpg',
+    '/img/8.jpg',
+    '/img/9.jpg',
+    'sw.js'
 ];
 
 self.addEventListener('install', function(event) {
@@ -37,6 +51,7 @@ self.addEventListener('fetch', function(event) {
           function(response) {
             // Check if we received a valid response
             if(!response || response.status !== 200 || response.type !== 'basic') {
+              console.log("We have recieved a valid response request");
               return response;
             }
 
@@ -49,6 +64,9 @@ self.addEventListener('fetch', function(event) {
             caches.open(CACHE_NAME)
               .then(function(cache) {
                 cache.put(event.request, responseToCache);
+                console.log("the requested response has been put into the cache")
+              }).catch(function(err) {
+                console.log("the put function has failed: ");
               });
 
             return response;
@@ -58,9 +76,10 @@ self.addEventListener('fetch', function(event) {
     );
 });
 
+// This is working
 self.addEventListener('activate', function(event) {
 
-  var cacheWhitelist = ['mws-restaurant-cache-v1', 'mws-restaurant-cache-v4'];
+  var cacheWhitelist = [CACHE_NAME];
 
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
@@ -74,3 +93,4 @@ self.addEventListener('activate', function(event) {
     })
   );
 });
+

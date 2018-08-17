@@ -4,10 +4,17 @@ var pump = require('pump');
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
 
-var browserSync = require('browser-sync').create();
 
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
+
+gulp.task('processNOLSCSS', function() {
+  gulp.src('nols.css')
+    .pipe(sourcemaps.init())
+    .pipe(autoprefixer())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('nols'));
+});
 
 // Uglify our JS files
 
