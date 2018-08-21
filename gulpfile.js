@@ -8,14 +8,6 @@ var concat = require('gulp-concat');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 
-gulp.task('processNOLSCSS', function() {
-  gulp.src('nols.css')
-    .pipe(sourcemaps.init())
-    .pipe(autoprefixer())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('nols'));
-});
-
 // Uglify our JS files
 
 gulp.task('compress', () =>
@@ -40,13 +32,7 @@ gulp.task('processCSS', function() {
 });
 
 // Global build command
-gulp.task('default', 
-    ['compress', 'processCSS', 'copy-html', 'copy-images']
-    
-    browserSync.init({
-        server: './dist'
-    });
-);
+gulp.task('default', ['compress', 'processCSS']);
 
 // Instantiate the gulp watch command so that way we don't have so much to deal 
 gulp.task('watch', function() {
@@ -55,12 +41,3 @@ gulp.task('watch', function() {
   gulp.wath('/index.html', ['copy-html']);
 })
 
-gulp.task('copy-html', function() {
-    gulp.src('./index.html')
-        .pip(gulp.dest('./dist');
-});
-
-gulp.task('copy-images', function() {
-    gulp.src('img/*')
-        .pipe(gulp.dest('dist/img');
-});

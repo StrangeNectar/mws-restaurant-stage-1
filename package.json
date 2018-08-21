@@ -25,8 +25,11 @@
     "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
     "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.1.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.1",
+    "gulp-util": "^3.0.8",
+    "jshint-stylish": "^2.2.1",
     "pump": "^3.0.0"
   },
   "dependencies": {
