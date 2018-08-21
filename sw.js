@@ -1,4 +1,10 @@
+/*
+* Service worker script altered from this source
+* (https://developers.google.com/web/fundamentals/primers/service-workers/)
+* */
+
 var CACHE_NAME = 'mws-restaurant-cache-v1';
+
 var urlsToCache = [
     '/',
     '/css/styles.css',
@@ -51,7 +57,6 @@ self.addEventListener('fetch', function(event) {
           function(response) {
             // Check if we received a valid response
             if(!response || response.status !== 200 || response.type !== 'basic') {
-              console.log("We have recieved a valid response request");
               return response;
             }
 
