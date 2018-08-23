@@ -21,11 +21,11 @@
         var items = []; 
         gatherRestaurantData();
         console.log('Welp we made it to the promise then function')
-    }) 
+    }); 
     
     // Lets get the data we need
     function gatherRestaurantData() {
-        for(var i = 0; i < 10; i++) {
+        for(let i = 0; i < 10; i++) {
             let dataurl = `http://localhost:1337/restaurants/${i}` 
             data = fetch(dataurl);
             console.log(data);
