@@ -8,12 +8,10 @@ var CACHE_NAME = 'mws-restaurant-cache-v1';
 var urlsToCache = [
     '/',
     '/css/styles.css',
-    '/js/sw/index.js',
-    '/js/bg-idb.js',
-    '/js/dbhelper.js',
     '/js/main.js',
-    '/js/restaurant_info.js',
     'index.html',
+    '/js/restaurant_info.js',
+    '/js/dbhelper.js',
     'restaurant.html',
     '/img/1.jpg',
     '/img/2.jpg',
@@ -24,7 +22,7 @@ var urlsToCache = [
     '/img/7.jpg',
     '/img/8.jpg',
     '/img/9.jpg',
-    'sw.js'
+    '/img/10.jpg'
 ];
 
 self.addEventListener('install', function(event) {

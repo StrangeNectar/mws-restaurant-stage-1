@@ -32,7 +32,6 @@ class DBHelper {
         // Examine the text in the response
         response.json().then(function(data) { // otherwise lets settle up with this data
           const restaurants = data;
-          console.log(restaurants);
           callback(null, restaurants);
         });
       }
