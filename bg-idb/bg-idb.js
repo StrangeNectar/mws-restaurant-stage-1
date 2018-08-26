@@ -12,17 +12,7 @@
     }
 
     const dbPromise = idb.open('restaurant-store', 2, upgradeDb => {
-
-        switch (upgradeDb.oldVersion) {
-            case 0:
-               upgradeDb.createObjectStore(restaurantObjectStore, {keyPath: 'name'}); 
-            case 1:
-                var restaurantOS = upgradeDb.transaction.objectStore(restaurantObjectStore);            
-                restaurantOS.createIndex('id', 'id');
-            case 2:
-                var restaurantOS = upgradeDb.transaction.objectStore(restaurantObjectStore);
-                restaurantOS.createIndex('description', 'description');
-        }
+       upgradeDb.createObjectStore(restaurantObjectStore); 
         // Create more object stores here
     });
 
