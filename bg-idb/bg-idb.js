@@ -4,60 +4,110 @@
     // Declaring global vars
     let restaurantDataUrl = 'http://localhost:1337/restaurants/';
     let restaurantObjectStore = 'restaurantOS';
+    const restaurantKey = 'id';
 
     if(!('indexedDB' in window)) {
         console.log('This browser does not support IndexDB');
         return;
     }
 
-    var dbPromise = idb.open('restaurantData-1', 1, function(upgradeDb) {
+    const dbPromise = idb.open('restaurant-store', 1, upgradeDb => {
 
-        console.log('creating a new object store');
+        console.log('creating a new object store, with name: ' + restaurantObjectStore);
 
         if(!upgradeDb.objectStoreNames.contains(restaurantObjectStore)) {
-						var restaurantOS = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
+						var restaurantOS = upgradeDb.createObjectStore(restaurantObjectStore);
         }
         // Create more object stores here
     });
 
-    // lets catch this promise .then add some data to it
-    dbPromise.then(function(db){
-        var tx = db.transaction(restaurantObjectStore, 'readwrite');
-        var store = tx.objectStore(restaurantObjectStore);
-        var items = []; 
+    // Declaring our keyvalue store 
+    const idbKeyVal = {
+      get(key) {
+        return dbPromise.then(db => {
+            return db.transaction(restaurantObjectStore)
+              .objectStore(restaurantObjectStore).get(key);
+        });
+      },
 
-        let data = fetch(restaurantDataUrl, {
+      set(key, val) {
+				dbPromise.then(function(db){
+					var tx = db.transaction(restaurantObjectStore, 'readwrite');
+					var store = tx.objectStore(restaurantObjectStore);
+					store.add(key, val);
+				})				
+      },
+      
+      delete(key) {
+        return dbPromise.then(db =>{
+            const tx = db.transaction(restaurantObjectStore, 'readwrite');
+            tx.objectStore(restaurantObjectStore).delete(key);
+            return tx.complete;
+        });
+      },
 
-            method: 'GET'
+      keys() {
+        return dbPromise.then(db => {
+            const tx = db.transaction(restaurantObjectStore);
+            const keys = [];
+            const store = tx.objectStore(restaurantObjectStore);
 
-        }).then(function(response){
-             
-            return response.json();
+            (store.iterateKeyCursor || store.iterateCursor).call(store, cursosr => {
+                if(!cursor) return;
+                keys.push(cursor.key);
+                cursor.continue();
+            });
 
-        }).then(function(json){
-            
-						items.push(json["0"]);					
-						console.log('the items are', items);
+            return tx.complete.then(() => keys);
+        });
+      }
+    }
+    
+    
+    /*
+     *  @DESCRIPTION: Uses the fetch api to gather restaurant data from the restaurant api by a restaurant id.
+     *  @PARAMS:      Takes a restaurant id number that corresponds to the sequential json response data
+     *    -TYPE:      INTEGER 
+     *  @RETURNS:     Returns the relevant JSON Data
+     *  @AUTHOR: BENJAMIN BLUE GRONEMAN
+     *  @AUTHOR-EMAIL: bbg0714@cwc.edu
+     *
+     * */
+    
 
-        }).catch(function(err) {
+    fetch(restaurantDataUrl)
+      .then(status)
+      .then(json)
+      .then(addRestaurantDataToIDB)
+      .catch(function(error){
 
-            console.log('fetch failed');
+        console.log('Request failed', error);
 
-        }); 
-        
-        // Once we have populated items with restaurant data we can then add them to the store
-				
-        store.add(items, 'id');
-        return tx.complete;
+      });
 
-    }).then(function() {
+		function addRestaurantDataToIDB(data) {
+        // TODO: add restaurant data to IDB
+        for (let i = 0; i < 10; i++) { 
+        	idbKeyVal.set(data[i], i); 
+        }
+    }
 
-        console.log('The items have been added to the object store');
+		function status(response) {
+			if (response.status >= 200 && response.status < 300) {
+          
+				return Promise.resolve(response);
 
-    }).catch(function() {
+			} else {
 
-        console.log('The items have NOT been added to the store');
+				return Promise.reject(new Error(response.statusText));
 
-    }); 
+			}
+		}
+
+		function json(response) {
+
+			return response.json();
+
+		}
 
 })();
