@@ -11,12 +11,17 @@
         return;
     }
 
-    const dbPromise = idb.open('restaurant-store', 1, upgradeDb => {
+    const dbPromise = idb.open('restaurant-store', 2, upgradeDb => {
 
-        console.log('creating a new object store, with name: ' + restaurantObjectStore);
-
-        if(!upgradeDb.objectStoreNames.contains(restaurantObjectStore)) {
-						var restaurantOS = upgradeDb.createObjectStore(restaurantObjectStore);
+        switch (upgradeDb.oldVersion) {
+            case 0:
+               upgradeDb.createObjectStore(restaurantObjectStore, {keyPath: 'name'}); 
+            case 1:
+                var restaurantOS = upgradeDb.transaction.objectStore(restaurantObjectStore);            
+                restaurantOS.createIndex('id', 'id');
+            case 2:
+                var restaurantOS = upgradeDb.transaction.objectStore(restaurantObjectStore);
+                restaurantOS.createIndex('description', 'description');
         }
         // Create more object stores here
     });
