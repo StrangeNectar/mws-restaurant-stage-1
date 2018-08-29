@@ -1,4 +1,4 @@
-(function() {
+var restaurauntIDB = (function() {
     'use strict';
     
     // Declaring global vars
@@ -12,8 +12,30 @@
     }
 
     const dbPromise = idb.open('restaurant-store', 2, upgradeDb => {
-       upgradeDb.createObjectStore(restaurantObjectStore); 
-        // Create more object stores here
+
+    if(!upgradeDb.objectStoreNames.contains(restaurantObjectStore)) {
+        switch(upgradeDb.oldVersion) {
+            case 0:
+                // get setup for inital view
+            case 1:
+                console.log('The object store is being created switch case 1');
+                upgradeDb.createObjectStore(restaurantObjectStore);
+            case 2: 
+                console.log('Creating new index');
+                var store = upgradeDb.transaction.objectStore(restaurantObjectStore);
+                store.createIndex('restaurantName', 'restaurantName', {unique: true});
+            case 3:
+                console.log('Creating restaurant and id indexes');
+                var store = upgradeDb.transaction.objectStore(restaurantObjectStore);
+                store.createIndex('restaurant', 'restaurant');
+                store.createIndex('id', 'id');
+            case 4:
+                console.log('Creating the restaurants in the object store');
+                upgradeDb.createObjectStore('restaurants');
+        }
+    } else {
+        console.log("we messed up somewhere");
+    }
     });
 
     // Declaring our keyvalue store 
@@ -26,11 +48,11 @@
       },
 
       set(key, val) {
-				dbPromise.then(function(db){
-					var tx = db.transaction(restaurantObjectStore, 'readwrite');
-					var store = tx.objectStore(restaurantObjectStore);
-					store.add(key, val);
-				})				
+        dbPromise.then(function(db){
+            var tx = db.transaction(restaurantObjectStore, 'readwrite');
+            var store = tx.objectStore(restaurantObjectStore);
+            store.add(key, val);
+        })				
       },
       
       delete(key) {
@@ -68,41 +90,38 @@
      *  @AUTHOR-EMAIL: bbg0714@cwc.edu
      *
      * */
-    
-
     fetch(restaurantDataUrl)
-      .then(status)
-      .then(json)
-      .then(addRestaurantDataToIDB)
-      .catch(function(error){
+        .then(status)
+        .then(json)
+        .then(addRestaurantDataToIDB)
+        .catch(function(error){
 
         console.log('Request failed', error);
+    });
 
-      });
-
-		function addRestaurantDataToIDB(data) {
+    function addRestaurantDataToIDB(data) {
         // TODO: add restaurant data to IDB
         for (let i = 0; i < 10; i++) { 
-        	idbKeyVal.set(data[i], i); 
+            idbKeyVal.set(data[i], i); 
         }
     }
 
-		function status(response) {
-			if (response.status >= 200 && response.status < 300) {
-          
-				return Promise.resolve(response);
+    function status(response) {
+        if (response.status >= 200 && response.status < 300) {
+      
+            return Promise.resolve(response);
 
-			} else {
+        } else {
 
-				return Promise.reject(new Error(response.statusText));
+            return Promise.reject(new Error(response.statusText));
 
-			}
-		}
+        }
+    }
 
-		function json(response) {
+    function json(response) {
 
-			return response.json();
+        return response.json();
 
-		}
+    }
 
 })();
