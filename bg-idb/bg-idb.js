@@ -4,38 +4,53 @@ var restaurauntIDB = (function() {
     // Declaring global vars
     let restaurantDataUrl = 'http://localhost:1337/restaurants/';
     let restaurantObjectStore = 'restaurantOS';
+    
     const restaurantKey = 'id';
+    
+    // Gather necessary DOM elems
+    const container = document.getElementById('restaurant-list');
+    const dataSavedMessage = document.getElementById('data-saved');
+    const saveErrorMessage = document.getElementById('save-error');
+    const noDataMessage = document.getElementById('no-data');
+    const offlineMessage = document.getElementById('offline');
 
     if(!('indexedDB' in window)) {
         console.log('This browser does not support IndexDB');
         return;
     }
 
-    const dbPromise = idb.open('restaurant-store', 2, upgradeDb => {
+    loadContentFromNetworkInit();
 
-    if(!upgradeDb.objectStoreNames.contains(restaurantObjectStore)) {
-        switch(upgradeDb.oldVersion) {
-            case 0:
-                // get setup for inital view
-            case 1:
-                console.log('The object store is being created switch case 1');
-                upgradeDb.createObjectStore(restaurantObjectStore);
-            case 2: 
-                console.log('Creating new index');
-                var store = upgradeDb.transaction.objectStore(restaurantObjectStore);
-                store.createIndex('restaurantName', 'restaurantName', {unique: true});
-            case 3:
-                console.log('Creating restaurant and id indexes');
-                var store = upgradeDb.transaction.objectStore(restaurantObjectStore);
-                store.createIndex('restaurant', 'restaurant');
-                store.createIndex('id', 'id');
-            case 4:
-                console.log('Creating the restaurants in the object store');
-                upgradeDb.createObjectStore('restaurants');
-        }
-    } else {
-        console.log("we messed up somewhere");
+    function loadContentFromNetworkInit() {
+        getRestaurantData()
+        .then(dataFromNetwork => {
+            updateUI(dataFromNetwork);
+            saveEventDataLocally(dataFromNetwork)
+            .then(() => {
+                setLastUpdate(new Date());
+                messageDataSaved(); 
+            }).catch(err => {
+                messageSaveError();
+                console.warn(err);
+            });
+        }).catch(err => {
+            console.log('Network Requests have now failed, you are definetely offline');
+            getLocalEventData()
+            .then(offlineData => {
+                if(!offlineData.length) {
+                    messageNoData();
+                } else {
+                    messageOffline();
+                    updateUI(offlineData);
+                } 
+            });
+        });
     }
+
+    const dbPromise = idb.open('restaurant-store', 2, upgradeDb => {
+	if (!upgradeDb.objectStoreNames.contains('events')) {
+	  const restaurantOS = upgradeDb.createObjectStore(restaurantObjectStore);
+	}
     });
 
     // Declaring our keyvalue store 
@@ -45,6 +60,16 @@ var restaurauntIDB = (function() {
             return db.transaction(restaurantObjectStore)
               .objectStore(restaurantObjectStore).get(key);
         });
+      },
+      
+      getAll() {
+       if (!('indexeDB' in window)) {return null;}
+        return dbPromise.then(db => {
+            const tx = db.transaction(restaurantObjectStore, 'readonly');
+            const store = tx.objectStore(restaurantObjectStore);
+            return store.getAll();
+        });
+ 
       },
 
       set(key, val) {
@@ -90,15 +115,72 @@ var restaurauntIDB = (function() {
      *  @AUTHOR-EMAIL: bbg0714@cwc.edu
      *
      * */
-    fetch(restaurantDataUrl)
-        .then(status)
-        .then(json)
-        .then(addRestaurantDataToIDB)
-        .catch(function(error){
+    function getRestaurantData() {
+        return fetch(restaurantDataUrl)
+                .then(status)
+                .then(json)
+                .then(addRestaurantDataToIDB)
+                .catch(function(error){
 
-        console.log('Request failed', error);
-    });
+                console.log('Request failed', error);
+        });
+    }
+    
+    function updateUI(events) {
+        events.forEach(event => {
+            const item = 
+            `
+                <li>
+                    <img class="restaurant-img" src="${event.photograph}.jpg"
+                    <h2>${event.name}<h2>
+                    <p>${event.neighborhood}</p>
+                    <p>${event.address}</p>
+                    <a aria-label="view details of ${event.name} restaurant" href="./restaurant.html?id=${event.id}>View Details</a>
+                </li>    
+            `
+            container.insertAdjacentHTML('beforeend', item);
+        }) 
+    }
 
+    function setLastUpdate() {
+        localStorage.setItem('lastUpdated', date);
+    }
+
+    function messageDataSaved() {
+        const lastUpdated = getLastUpdated();
+        if(lastUpdated) {dataSavedMessage.textContent += ' on ' + lastUpdated;}
+        dataSavedMessage.style.display = 'block';
+    }
+
+    function getLastUpdated() {
+        return localStorage.getItem('lastUpdated');
+    }
+
+    function messageSaveError() {
+        // aler the user
+        saveErrorMessage.style.display = 'block';
+    }
+
+    function getLocalEventData() {
+        return dbPromise.then(db => {
+            const tx = db.transaction(restaurantObjectStore, 'readonly');
+            const store = tx.objectStore(restaurantObjectStore);
+            return store.getAll();
+        });
+    }
+
+    function messageNoData() {
+        noDataMessage.style.display = 'block';
+    }
+    
+    function messageOffline() {
+        const lastUpdated = getLastUpdated();
+        if (lastUpdated) {
+            offlineMessage.textContent += ' last fetched server data: ' + lastUpdated;
+        }
+        offlineMessage.style.display = 'block';
+    }
+    
     function addRestaurantDataToIDB(data) {
         // TODO: add restaurant data to IDB
         for (let i = 0; i < 10; i++) { 
@@ -123,5 +205,7 @@ var restaurauntIDB = (function() {
         return response.json();
 
     }
+	
+	
 
 })();

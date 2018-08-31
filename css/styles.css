@@ -340,3 +340,30 @@ nav h1 a {
 #restaurant-hours td {
   color: #666;
 }
+
+/*My css for indexdb fail and success*/
+#data-saved {
+   display: none; 
+   background-color: green;
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+}
+#save-error {
+    display: none;
+    background-color: #ccc;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+}
+#no-data {
+    display: none;
+    background-color: #ccc;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+}

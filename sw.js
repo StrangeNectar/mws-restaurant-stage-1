@@ -9,6 +9,8 @@ var urlsToCache = [
     '/',
     '/css/styles.css',
     '/js/main.js',
+    '/bg-idb/bg-idb.js',
+    '/bg-idb/idb.js',
     'index.html',
     '/js/restaurant_info.js',
     '/js/dbhelper.js',
