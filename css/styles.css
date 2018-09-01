@@ -83,6 +83,12 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
    #restaurant-container {
     width: 100%!important;
     overflow: hidden;
+    margin-top: 200px;
+
+   }
+   #main-content {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
    }
    #map-container {
     width: 100%!important;
@@ -261,6 +267,9 @@ nav h1 a {
     }
     #map-container {
         height: 30%!important;
+    }
+    #restaurant-container {
+        
     }
     
 }
