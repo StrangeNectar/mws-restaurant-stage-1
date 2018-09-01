@@ -24,7 +24,7 @@ var restaurauntIDB = (function() {
     function loadContentFromNetworkInit() {
         getRestaurantData()
         .then(dataFromNetwork => {
-            updateUI(dataFromNetwork);
+            //updateUI(dataFromNetwork);
             saveEventDataLocally(dataFromNetwork)
             .then(() => {
                 setLastUpdate(new Date());
@@ -41,13 +41,13 @@ var restaurauntIDB = (function() {
                     messageNoData();
                 } else {
                     messageOffline();
-                    updateUI(offlineData);
+                    //updateUI(offlineData);
                 } 
             });
         });
     }
 
-    const dbPromise = idb.open('restaurant-store', 2, upgradeDb => {
+    const dbPromise = idb.open('restaurant-store', 1, upgradeDb => {
 	if (!upgradeDb.objectStoreNames.contains('events')) {
 	  const restaurantOS = upgradeDb.createObjectStore(restaurantObjectStore);
 	}

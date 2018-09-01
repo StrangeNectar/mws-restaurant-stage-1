@@ -1,6 +1,8 @@
 /**
  * Common database helper functions.
  */
+let dbPromise;
+
 class DBHelper {
 
   /**
@@ -11,36 +13,99 @@ class DBHelper {
     const port = 1337 // Change this to your server port
     return `http://localhost:${ port }/restaurants`;
   }
+  /**
+   * Create getter for constants.
+   */
+    static get RESTAURANT_OBJECTSTORE() {
+        const restaurantOS = 'restaurantOS';
+        return restaurantOS;
+    }
+   /**
+    *   create object store
+    */
+    static createOS(callback) {
 
+        const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE; 
+
+        return idb.open('restaurant-database', 1, db => { 
+            if (!db.objectStoreNames.contains(restaurantObjectStore)) {
+                console.log('we created the object store with name: ', restaurantObjectStore);
+                db.createObjectStore(restaurantObjectStore);
+            } else {
+                console.error('we failed to create the object store');
+            }
+        });
+    }
+  /**
+   * Put restaurants in store
+   */
+
+    static getLocalEventData() {
+
+        dbPromise = this.createOS();
+
+        const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE; 
+
+	    return dbPromise.then((db) => {
+
+            if(!db) {
+                
+               return;
+
+            } else {
+
+                const tx = db.transaction(restaurantObjectStore, 'readonly');
+		        const store = tx.objectStore(restaurantObjectStore);
+
+		        return store.getAll();    
+            }
+        });	
+    }    
+    
+   
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
       // Grab the DB URL
       let DB_URL = DBHelper.DATABASE_URL;
-     
-     // Make the fetch request
-     fetch(DB_URL) 
-      .then(
-        function(response) {
-          if (response.status !== 200) {
-            console.log('Looks like there was a problem. Status Code: ' + response.status);  //if we failed let us know
-            return;
-            callback(error, null);
-          }
 
-        // Examine the text in the response
-        response.json().then(function(data) { // otherwise lets settle up with this data
-          const restaurants = data;
-          callback(null, restaurants);
+      const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE; 
+
+      DBHelper.getLocalEventData().then((restaurants) => {
+        if (restaurants.length > 0) {
+            return callback(null, restaurants);
+        }
+
+        fetch(DB_URL)
+            .then((res) => {
+                if(res.ok) {
+                    return res.json();
+                }
+                throw new Error('The network request with fetch failed');
+            })
+            .then((json) => {
+                dbPromise.then((db) => {
+                    if(!db) {
+                        return callback(null, json);
+                    }
+                    
+                    let tx = db.transaction(restaurantObjectStore, 'readwrite');
+                    let store = tx.objectStore(restaurantObjectStore);
+
+                    for (let i = 0; i < 10; i++) {
+                       store.add(json[i], i); 
+                    }
+
+                });
+
+                callback(null, json);
+
+            }).catch((err) => {
+               callback(err, null); 
+            });
         });
-      }
-    )
-    .catch(function(err) {
-      console.log('Fetch Error :-S', err);
-    });
   }
-
   /**
    * Fetch a restaurant by its ID.
    */
