@@ -129,6 +129,11 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 }
 
 /**
+ * Send the form data using XHR
+ */
+
+
+/**
  * Create review HTML and add it to the webpage.
  */
 createReviewHTML = (review) => {
