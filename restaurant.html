@@ -51,6 +51,46 @@
     <!-- Beginning reviews -->
     <section id="reviews-container">
       <ul id="reviews-list"></ul>
+      <div class="form-wrapper">
+        <form class="form">
+
+          <!-- Begin the  name input -->
+          <div class="form-group">
+            <label for="name">
+              Name
+              <input name="name" type="text" class="form-control" id="name"></input>
+            </label>
+            <!-- End the first name input -->
+
+            <!-- Begin the comment section -->
+            <div class="form-group">
+              <label for="message">
+                Leave us some feedback
+                <textarea name="message" type="text" class="form-control" id="message"></textarea>
+              </label>
+            </div>
+            <!-- End the comment section -->
+            
+            <!-- Begin the favorite section -->
+						<div class="form-group">
+							<label for="rating">How would you rate this restaurant?</label>
+							<select name="rating" multiple class="form-control" id="rating">
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+							</select>
+						</div>
+						<!-- End the favorite section -->
+						<!-- Form submit button -->
+						<button id="form-submit-button" type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+        <div class="form-data">
+          <h1>Form Data</h1>
+        </div>
+      </div>
     </section>
     <!-- End reviews -->
   </main>

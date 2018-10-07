@@ -127,27 +127,86 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   });
   container.appendChild(ul);
 }
+/**
+ *  Checks to see wether the element has the information we need from it
+ *  Checks to see if the element data is valid
+ *  @param {element}
+ *  @return {bool}
+ */
+const isValidElement = element => {
+  return element.name && element.value;
+}
+
+/**
+ *  Handle the form submission and convert the data to JSON
+ *  @param {HTMLFormControlsCollection}
+ *  @return {object}
+ */
+const formToJSON_deconstructed = elements => {
+
+  const formReducer = (data, element) => {
+  
+    // add the current field to our data object
+    if (isValidElement(element)) {
+
+      data[element.name] = element.value;
+     
+    }
+
+    console.log(JSON.stringify(data));
+
+    return data;
+
+  }
+  
+  const reducerInitialValue = {};
+
+  console.log('initial `data` value:', JSON.stringify(reducerInitialValue));
+
+  const formData = [].reduce.call(elements, formReducer, reducerInitialValue);
+
+  return formData;
+}
+
+/**
+ *  Handle the form submission and convert the data to JSON
+ *  @param {event}
+ *  @return {void}
+ */
+const handleFormSubmit = event => {
+  // We want to avoid the default
+  event.preventDefault();
+
+  // TODO: call our functnion to get the form data
+  const data = formToJSON_deconstructed(form.elements);
+  // Lets get a visual of our form data here
+  const data_container = document.getElementsByClassName('form-data')[0];
+
+  data_container.textContent = JSON.stringify(data, null, " ");
+
+  sendFormDataToApi(data)
+}
+
+const form = document.getElementsByClassName('form')[0];
+
+form.addEventListener('submit', handleFormSubmit);
 
 /**
  * Send the form data using XHR
  */
 sendFormDataToApi = (data) => {
-  let formData = new FormData();
+  let url ='http://localhost:1337/reviews';
+  let formData = data;
 
-  // Lets prepare the response data to be in the right form
-  let formObject = new Object(); 
-
-  formObject.restauraunt_id = data.restaurant_id;
-  formObject.name = data.name;
-  formObject.rating = data.rating;
-  formObject.comments = data.comment;
-
-  formData.append(formObject);
-  
-  var request = new XMLHttpRequest();
-  request.open("POST", "http://localhost:1337/reviews/");
-  
-  request.send(formData);
+  fetch(url, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(res => res.json())
+  .then(response => console.log('Success:', JSON.stringify(response)))
+  .catch(error => console.error('Error:', error));
 }
 
 
