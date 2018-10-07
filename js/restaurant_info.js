@@ -184,6 +184,7 @@ const handleFormSubmit = event => {
 
   data_container.textContent = JSON.stringify(data, null, " ");
 
+  console.log(data);
   sendFormDataToApi(data)
 }
 
@@ -202,7 +203,9 @@ sendFormDataToApi = (data) => {
     method: 'POST',
     body: formData,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+
     }
   }).then(res => res.json())
   .then(response => console.log('Success:', JSON.stringify(response)))
