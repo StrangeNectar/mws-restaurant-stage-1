@@ -131,6 +131,24 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 /**
  * Send the form data using XHR
  */
+sendFormDataToApi = (data) => {
+  let formData = new FormData();
+
+  // Lets prepare the response data to be in the right form
+  let formObject = new Object(); 
+
+  formObject.restauraunt_id = data.restaurant_id;
+  formObject.name = data.name;
+  formObject.rating = data.rating;
+  formObject.comments = data.comment;
+
+  formData.append(formObject);
+  
+  var request = new XMLHttpRequest();
+  request.open("POST", "http://localhost:1337/reviews/");
+  
+  request.send(formData);
+}
 
 
 /**
