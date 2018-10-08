@@ -196,15 +196,15 @@ form.addEventListener('submit', handleFormSubmit);
  * Send the form data using XHR
  */
 sendFormDataToApi = (data) => {
-  let url ='http://localhost:1337/reviews';
+  let url ='http://localhost:1337/reviews/';
   let formData = data;
 
   fetch(url, {
-    method: 'POST',
+    method: 'PUT',
+    mode: 'cors',
     body: formData,
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
+      'Content-Type': 'application/json'
 
     }
   }).then(res => res.json())
