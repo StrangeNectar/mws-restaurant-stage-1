@@ -40,7 +40,7 @@ var restaurauntIDB = (function() {
                 if(!offlineData.length) {
                     messageNoData();
                 } else {
-                    messageOffline();
+                    //messageOffline();
                     //updateUI(offlineData);
                 } 
             });
@@ -73,11 +73,15 @@ var restaurauntIDB = (function() {
       },
 
       set(key, val) {
-        dbPromise.then(function(db){
-            var tx = db.transaction(restaurantObjectStore, 'readwrite');
-            var store = tx.objectStore(restaurantObjectStore);
-            store.add(key, val);
-        })				
+        if(!key){
+          dbPromise.then(function(db){
+              var tx = db.transaction(restaurantObjectStore, 'readwrite');
+              var store = tx.objectStore(restaurantObjectStore);
+              store.add(key, val);
+          })				
+        } else {
+          console.log('Welp, the key is already in the store so do not add them');
+        }
       },
       
       delete(key) {
