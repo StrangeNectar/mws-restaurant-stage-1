@@ -184,7 +184,6 @@ const handleFormSubmit = event => {
 
   data_container.textContent = JSON.stringify(data, null, " ");
 
-  console.log(data);
   sendFormDataToApi(data)
 }
 
@@ -199,15 +198,19 @@ sendFormDataToApi = (data) => {
   let url ='http://localhost:1337/reviews/';
   let formData = data;
 
+  const res_id = "resaurant_id";
+
+  const id = getParameterByName('id');
+
+  console.log(formData);
+
+  formData["restaurant_id"] = id;
+
   fetch(url, {
     method: 'POST',
     mode: 'no-cors',
     body: formData,
-    headers: {
-      'Content-Type': 'application/json'
-    }
   }).then(res => res.json())
-    .then(response => console.log('Success:', JSON.stringify(response)))
     .catch(error => console.error('Error:', error));
 }
 
