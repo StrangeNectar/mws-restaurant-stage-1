@@ -7,12 +7,19 @@ class DBHelper {
 
   /**
    * Database URL.
-   * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
     return `http://localhost:${ port }/restaurants`;
   }
+  /**
+   * DB Reviews URL.
+   */
+  static get DB_REVIEWS_URL() {
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${ port }/reviews`;
+  }
+
   /**
    * Create getter for constants.
    */
@@ -254,6 +261,39 @@ class DBHelper {
       marker.addTo(newMap);
     return marker;
   } 
+  /**
+   * Method that will take our reivew form data an post it to our api as JSON.
+   */
+  static postRestaurantReview(reviewBody) {
+    const { reviewName, reviewRating, reviewComment, restaurant_id } = reviewBody; 
+    const thisReview = { reviewName, reviewRating, reviewComment, restaurant_id };
+
+    // now that we have the data lets post the review to our server
+    fetch(DBHelper.DB_REVIEWS_URL, {
+      method: 'post',
+      body: JSON.stringify(thisReview),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      })
+    }).then(res => {
+      return res.json();
+    });
+  }
+
+  /**
+   * This will ensure that our data doesn't get lost into nothingness.
+   * Like it was before.
+   * This should keep it alive after the form submission
+   */
+  //static synchronizeData(reviewBody) {
+    //localStorage.setItem('review', JSON.stringify(reviewBody.data));
+    
+    //window.addEventListener('online', () => {
+      //const reviewData = JSON.parse(localStorage.getItem('review'));
+      //const offlineLabels = Array.prototype.slice.call(document.querySelectorAll('.
+   // })
+ // }
+
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,

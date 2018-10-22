@@ -173,46 +173,50 @@ const formToJSON_deconstructed = elements => {
  *  @param {event}
  *  @return {void}
  */
-const handleFormSubmit = event => {
-  // We want to avoid the default
+const handleFormSubmit = () => {
+  // We want to avoid the default action of a form submission
   event.preventDefault();
 
-  // TODO: call our functnion to get the form data
-  const data = formToJSON_deconstructed(form.elements);
-  // Lets get a visual of our form data here
-  const data_container = document.getElementsByClassName('form-data')[0];
+  // Lets build up our post body
+  const restaurantID = getParameterByName('id');
+  const name = document.getElementById('name').value;
+  const reviewRating = document.getElementById('rating').value;
+  const comments = document.getElementById('message').value;
 
-  data_container.textContent = JSON.stringify(data, null, " ");
-
-  sendFormDataToApi(data)
+  // The key names for this object need to match what is expected by:
+  // createReviewHTML
+  const postBody = {
+    date: new Date(),
+    // We have to parse our string
+    restaurant_id: parseInt(restaurantID),
+    // We have to parse our string
+    rating: parseInt(reviewRating),
+    name,
+    comments
+  };
+  
+  // Send this data to our helper function
+  // This will post the data to the api
+  DBHelper.postRestaurantReview(postBody);
+  // We also want the data to be posted to the page live
+  updateReviews(postBody);
+  // Lets be sure to reset the form without a page interuption
+  document.querySelector('form').reset();
 }
 
-const form = document.getElementsByClassName('form')[0];
+updateReviews = review => {
+
+  const reviews_container = document.querySelector('#reviews-container');
+  const ul = document.querySelector('#reviews-list');
+  ul.insertBefore(createReviewHTML(review), ul.firstChild);
+  reviews_container.appendChild(ul);
+
+}
+
+/* Lets listen for that sweet form submission */
+const form = document.querySelector('form');
 
 form.addEventListener('submit', handleFormSubmit);
-
-/**
- * Send the form data using XHR
- */
-sendFormDataToApi = (data) => {
-  let url ='http://localhost:1337/reviews/';
-  let formData = data;
-
-  const res_id = "resaurant_id";
-
-  const id = getParameterByName('id');
-
-  console.log(formData);
-
-  formData["restaurant_id"] = id;
-
-  fetch(url, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: formData,
-  }).then(res => res.json())
-    .catch(error => console.error('Error:', error));
-}
 
 
 /**

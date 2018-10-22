@@ -296,6 +296,11 @@ nav h1 a {
 #restaurant-img {
 	width: 90%;
 }
+.form-wrapper {
+  width: 100%;
+  padding: 45px;
+  margin: 45px;
+}
 #restaurant-address {
   font-size: 12pt;
   margin: 10px 0px;
