@@ -95,7 +95,7 @@ class DBHelper {
     //}
 
     /**
-     * Put restaurants in store
+     * get all restaurants in store
      */
     static getLocalEventData() {
 
@@ -180,7 +180,7 @@ class DBHelper {
     return fetch(`${DBHelper.REVIEWS_DATABASE_URL}?restaurant_id=${restaurauntID}`)
       .then(res => res.json())
       .then(thisRestaurantReviews => {
-        DBHelper.openDB(restaurauntID).then(db => {
+        DBHelper.openDB().then(db => {
           // if we don't have a db
           if (!db) return;
 
@@ -188,7 +188,7 @@ class DBHelper {
           const tx = db.transaction('reviews', 'readwrite');
           const store = tx.objectStore('reviews');
           
-          if (thisRestaurantReviews.constructor === Array) {
+          if (thisRestaurantReviews.length >= 1) {
             thisRestaurantReviews.forEach(review => store.put(thisRestaurantReviews));
           } else {
             store.put(thisRestaurantReviews);
@@ -198,11 +198,16 @@ class DBHelper {
       }).catch(e => {
         return DBHelper.openDB().then(db => {
           if (!db) {
+            // Some helpful debuggin info
             console.log("our db is in a state of: ", db);
+            console.error(e);
           } else {
-            const store = db.transaction('reviews').objectStore('reviews');
-            const index = store.index('restaurant');
-            return index.getAll(restaurauntID);
+            // Some helpful debuggin info
+            console.info("Our db is in a state of: ", db);
+            console.error(e);
+            //const store = db.transaction('reviews').objectStore('reviews');
+            //const index = store.index('restaurant');
+            //return index.getAll(restaurauntID);
           } 
         });
       });
