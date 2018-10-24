@@ -141,37 +141,6 @@ const isValidElement = element => {
 
 /**
  *  Handle the form submission and convert the data to JSON
- *  @param {HTMLFormControlsCollection}
- *  @return {object}
- */
-const formToJSON_deconstructed = elements => {
-
-  const formReducer = (data, element) => {
-  
-    // add the current field to our data object
-    if (isValidElement(element)) {
-
-      data[element.name] = element.value;
-     
-    }
-
-    console.log(JSON.stringify(data));
-
-    return data;
-
-  }
-  
-  const reducerInitialValue = {};
-
-  console.log('initial `data` value:', JSON.stringify(reducerInitialValue));
-
-  const formData = [].reduce.call(elements, formReducer, reducerInitialValue);
-
-  return formData;
-}
-
-/**
- *  Handle the form submission and convert the data to JSON
  *  @param {event}
  *  @return {void}
  */
@@ -219,7 +188,6 @@ updateReviews = review => {
 const form = document.querySelector('form');
 
 form.addEventListener('submit', handleFormSubmit);
-
 
 /**
  * Create review HTML and add it to the webpage.
