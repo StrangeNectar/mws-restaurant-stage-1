@@ -184,7 +184,7 @@ createRestaurantHTML = (restaurant) => {
     * */
   const favoriteBtn = document.createElement('button')
   favoriteBtn.className = "restaurant-card--favorite";
-  favoriteBtn.innerHTML = "&lambda;   Favorite Resteraunt?";
+  favoriteBtn.innerHTML = "&#128077;   Favorite Resteraunt?";
   handleFavoriteBTN(favoriteBtn, restaurant)
   li.append(favoriteBtn);
 

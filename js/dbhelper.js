@@ -172,7 +172,7 @@ class DBHelper {
       }
     }); 
   }
-   
+
   /**
    *  Gets the reviews from the db and then updates the db if needed.
    */
@@ -189,10 +189,14 @@ class DBHelper {
           const store = tx.objectStore('reviews');
           
           if (thisRestaurantReviews.constructor.name == "Array") {
-            thisRestaurantReviews.forEach(review => store.put(thisRestaurantReviews));
-            console.log(`${DBHelper.REVIEWS_DATABASE_URL}?restaurant_id=${restaurauntID}`);
-            console.log(thisRestaurantReviews );
+            for (let i = 0; i < thisRestaurantReviews.length; i++) {
+              store.put(thisRestaurantReviews[i]);
+            }
+            console.log(`${DBHelper.REVIEWS_DATABASE_URL}/?restaurant_id=${restaurauntID}`);
+            console.log(thisRestaurantReviews);
+            console.log(thisRestaurantReviews.lenght);
           } else {
+            // This would be used for a single array item
             store.put(thisRestaurantReviews);
           }
         });
