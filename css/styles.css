@@ -199,7 +199,7 @@ nav h1 a {
   text-align: center;
 }
 #restaurants-list li {
-  background-color: #fff;
+  background-color: #70a0c1;
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
   margin: 15px;
@@ -207,6 +207,7 @@ nav h1 a {
   padding: 0 30px 25px;
   text-align: left;
   width: 270px;
+  color: white;
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
@@ -228,6 +229,7 @@ nav h1 a {
 }
 #restaurants-list p {
   margin: 0;
+  color: white;
   font-size: 11pt;
 }
 #restaurants-list li a {
