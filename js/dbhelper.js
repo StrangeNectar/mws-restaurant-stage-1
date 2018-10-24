@@ -9,13 +9,20 @@ class DBHelper {
    * Database URL.
    */
   static get DATABASE_URL() {
-    const port = 1337 // Change this to your server port
+    const port = 1337 
+    return `http://localhost:${ port }`;
+  }
+  /**
+   * Restaurant Database URL.
+   */
+  static get RESTAURANT_DATABASE_URL() {
+    const port = 1337
     return `http://localhost:${ port }/restaurants`;
   }
   /**
    * DB Reviews URL.
    */
-  static get DB_REVIEWS_URL() {
+  static get REVIEWS_DATABASE_URL() {
     const port = 1337 // Change this to your server port
     return `http://localhost:${ port }/reviews`;
   }
@@ -142,12 +149,13 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
+
     const DB_URL = DBHelper.DATABASE_URL;
     const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE;
     
     DBHelper.getLocalEventData().then(restaurants => {
       if(restaurants.length === 0) {
-        fetch(`${DB_URL}`).then(res =>  {
+        fetch(`${DB_URL}/restaurants`).then(res =>  {
           if(res.ok) {
             return res.json();
           }
@@ -169,7 +177,7 @@ class DBHelper {
    *  Gets the reviews from the db and then updates the db if needed.
    */
   static getReviews(restaurauntID) {
-    return fetch(`${DBHelper.DB_REVIEWS_URL}?restaurant_id=${restaurauntID}`)
+    return fetch(`${DBHelper.REVIEWS_DATABASE_URL}?restaurant_id=${restaurauntID}`)
       .then(res => res.json())
       .then(thisRestaurantReviews => {
         DBHelper.openDB(restaurauntID).then(db => {
@@ -347,18 +355,25 @@ class DBHelper {
       marker.addTo(newMap);
     return marker;
   } 
+
   /**
    * Allows the ability to favorite a restaurant
    *
    */
   static setRestaurantAsFavorite(restaurauntID, isFavoriteRestaurant) {
-    fetch(`${DBHelper.DATABASE_URL}${restaurauntID}/?is_favorite=${isFavoriteRestaurant}`, {
+    fetch(`${DBHelper.DATABASE_URL}/restaurants/${restaurauntID}/?is_favorite=${isFavoriteRestaurant}`, {
       method: 'put',
     }).then(() => {
-      idb.open(DBHelper.RESTAURANT_DB_NAME, 1, function(upgradeDb) {
-        
-      })
-    }) 
+      DBHelper.openDB().then(db => {
+        const tx = db.transaction(DBHelper.RESTAURANT_OBJECTSTORE, 'readwrite');
+        const store = tx.objectStore(DBHelper.RESTAURANT_OBJECTSTORE);
+
+        store.get(restaurauntID).then(restaurant =>  {
+          restaurant.isFavoriteRestaurant = isFavoriteRestaurant;
+          store.put(restaurant);
+        });
+      });     
+    });
   }
 
   /**
@@ -380,7 +395,7 @@ class DBHelper {
     const thisReview = { reviewName, reviewRating, reviewComment, restaurant_id };
 
     // now that we have the data lets post the review to our server
-    fetch(DBHelper.DB_REVIEWS_URL, {
+    fetch(DBHelper.REVIEWS_DATABASE_URL, {
       method: 'post',
       body: JSON.stringify(thisReview),
       headers: new Headers({
@@ -408,31 +423,5 @@ class DBHelper {
       localStorage.removeItem('review');
     });
   }
-
-  /**
-   * This will ensure that our data doesn't get lost into nothingness.
-   * Like it was before.
-   * This should keep it alive after the form submission
-   */
-  //static synchronizeData(reviewBody) {
-    //localStorage.setItem('review', JSON.stringify(reviewBody.data));
-    
-    //window.addEventListener('online', () => {
-      //const reviewData = JSON.parse(localStorage.getItem('review'));
-      //const offlineLabels = Array.prototype.slice.call(document.querySelectorAll('.
-   // })
- // }
-
-  /* static mapMarkerForRestaurant(restaurant, map) {
-    const marker = new google.maps.Marker({
-      position: restaurant.latlng,
-      title: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant),
-      map: map,
-      animation: google.maps.Animation.DROP}
-    );
-    return marker;
-  } */
-
 }
 

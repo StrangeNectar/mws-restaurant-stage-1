@@ -268,10 +268,11 @@ nav h1 a {
     #map-container {
         height: 30%!important;
     }
-    #restaurant-container {
-        
-    }
-    
+}
+.restaurant-card--favorite {
+  width: 100%;
+  height: 50px;
+  background-color: #54d0ba;
 }
 .inside #map {
   background-color: #ccc;

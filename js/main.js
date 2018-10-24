@@ -140,6 +140,30 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
+
+/**
+ * Handles the click event on the favorite btn.
+ */
+function handleFavoriteBTN(element, restaurant) {
+
+  element.addEventListener('click', function() {
+    restaurant.isFavoriteRestaurant = !restaurant.isFavoriteRestaurant;
+    DBHelper.setRestaurantAsFavorite(restaurant.id, restaurant.isFavoriteRestaurant);
+    handleFavoriteBtnState(element, restaurant.isFavoriteRestaurant);
+  });
+
+  handleFavoriteBtnState(element, restaurant.isFavoriteRestaurant);
+}
+
+function handleFavoriteBtnState(element, isFavoriteRestaurant) {
+  if(!isFavoriteRestaurant) {
+    element.classList.add("restaurant-is--favorite");
+    console.log(isFavoriteRestaurant);
+  } else {
+    element.classList.remove("restaurant-is--favorite");
+  } 
+}
+
 /**
  * Create restaurant HTML.
  */
@@ -151,6 +175,18 @@ createRestaurantHTML = (restaurant) => {
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   image.alt = DBHelper.imageAltTextForRestaurant(restaurant);
   li.append(image);
+
+  /* Lets get favoriting! 
+    * From a UX perspective:
+    * I believe the button should be on the first page load because:
+    * If the user has a favorite restaurant they will likely not have to click
+    * the restaurant to find more information
+    * */
+  const favoriteBtn = document.createElement('button')
+  favoriteBtn.className = "restaurant-card--favorite";
+  favoriteBtn.innerHTML = "&lambda;";
+  handleFavoriteBTN(favoriteBtn, restaurant)
+  li.append(favoriteBtn);
 
   const name = document.createElement('h2');
   name.innerHTML = restaurant.name;
