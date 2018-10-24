@@ -70,7 +70,7 @@ class DBHelper {
           upgradeDb.createObjectStore('reviews', {
             keyPath: 'id',
             autoIncrement: true
-          }).createIndex('restaurant', 'restaurant_id');
+          });
       }
     });
   }
@@ -177,7 +177,7 @@ class DBHelper {
    *  Gets the reviews from the db and then updates the db if needed.
    */
   static getReviews(restaurauntID) {
-    return fetch(`${DBHelper.REVIEWS_DATABASE_URL}?restaurant_id=${restaurauntID}`)
+    return fetch(`${DBHelper.REVIEWS_DATABASE_URL}/?restaurant_id=${restaurauntID}`)
       .then(res => res.json())
       .then(thisRestaurantReviews => {
         DBHelper.openDB().then(db => {
@@ -188,13 +188,17 @@ class DBHelper {
           const tx = db.transaction('reviews', 'readwrite');
           const store = tx.objectStore('reviews');
           
-          if (thisRestaurantReviews.length >= 1) {
+          if (thisRestaurantReviews.constructor.name == "Array") {
             thisRestaurantReviews.forEach(review => store.put(thisRestaurantReviews));
+            console.log(`${DBHelper.REVIEWS_DATABASE_URL}?restaurant_id=${restaurauntID}`);
+            console.log(thisRestaurantReviews );
           } else {
             store.put(thisRestaurantReviews);
           }
         });
         return Promise.resolve(thisRestaurantReviews);
+        // if our fetch failes ->
+        // likely we are offline so then just fetch the data from our DB
       }).catch(e => {
         return DBHelper.openDB().then(db => {
           if (!db) {
@@ -205,9 +209,9 @@ class DBHelper {
             // Some helpful debuggin info
             console.info("Our db is in a state of: ", db);
             console.error(e);
-            //const store = db.transaction('reviews').objectStore('reviews');
-            //const index = store.index('restaurant');
-            //return index.getAll(restaurauntID);
+            const store = db.transaction('reviews').objectStore('reviews');
+            const index = store.index('restaurant');
+            return index.getAll(restaurauntID);
           } 
         });
       });
@@ -422,8 +426,6 @@ class DBHelper {
     
     window.addEventListener('online', function() {
       const reviewData = JSON.parse(localStorage.getItem('review'));
-      const offlineLabels = Array.prototype.slice.call(document.querySelectorAll('.restaurant-review-is__offline'));
-      offlineLabels.forEach(element => element.remove());
       if (reviewBody.name === 'tempReview') DBHelper.postRestaurantReview(review.data);
       localStorage.removeItem('review');
     });

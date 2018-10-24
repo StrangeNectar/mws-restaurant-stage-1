@@ -53,13 +53,13 @@
       <ul id="reviews-list"></ul>
 
       <div class="form-wrapper">
-        <form method="POST" action="localhost:1337/reviews" class="form">
+        <form aria-label="post a review form" method="POST" action="localhost:1337/reviews" class="form">
 
           <!-- Begin the  name input -->
           <div class="form-container__inner form-group">
             <label for="name">
               Name
-              <input name="name" type="text" class="form-control--global form-control--name form-control" id="name"></input>
+              <input aria-label="your name" name="name" type="text" class="form-control--global form-control--name form-control" id="name"></input>
             </label>
             <!-- End the first name input -->
 
@@ -67,7 +67,7 @@
             <div class="form-group">
               <label for="message">
                 Leave us some feedback
-                <textarea name="message" type="text" class="form-control--global form-control--comment form-control" id="message"></textarea>
+                <textarea aria-label="your review comment" name="message" type="text" class="form-control--global form-control--comment form-control" id="message"></textarea>
               </label>
             </div>
             <!-- End the comment section -->
@@ -75,7 +75,7 @@
             <!-- Begin the favorite section -->
 						<div class="form-group">
 							<label for="rating">How would you rate this restaurant?</label>
-							<select name="rating" multiple class="form-control--global form-control--rating form-control" id="rating">
+							<select aria-label="your rating of the restaurant" name="rating" multiple class="form-control--global form-control--rating form-control" id="rating">
 								<option>1</option>
 								<option>2</option>
 								<option>3</option>
@@ -85,7 +85,7 @@
 						</div>
 						<!-- End the favorite section -->
 						<!-- Form submit button -->
-						<button id="form-submit-button" type="submit" class="btn btn-primary">Submit</button>
+						<button aria-label="post your review button" id="form-submit-button" type="submit" class="btn btn-primary">Submit</button>
 
         </form>
         <div class="form-data">
