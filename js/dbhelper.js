@@ -391,23 +391,18 @@ class DBHelper {
    * Method that will take our reivew form data an post it to our api as JSON.
    */
   static postRestaurantReview(reviewBody) {
-    const tempReview = {
-      name: 'tempReview',
-      data: reviewBody,
-      object_type: 'review',
-    };
 
     if (!navigator.onLine) {
-      DBHelper.syncDB(tempReview);
+      console.log(reviewBody);
+      DBHelper.syncDB(reviewBody);
       return;
     }
 
-    const { reviewName, reviewRating, reviewComment, restaurant_id } = reviewBody; 
     console.log(reviewBody);
 
     // now that we have the data lets post the review to our server
     fetch(DBHelper.REVIEWS_DATABASE_URL, {
-      method: 'post',
+      method: 'POST',
       body: JSON.stringify(reviewBody),
       headers: new Headers({
         'Content-Type': 'application/json',
@@ -426,13 +421,19 @@ class DBHelper {
     * saving the review in localstorage
     * Hehe JS is cool, eh?
     * */
-  static syncDB(reviewBody) {
-    localStorage.setItem('review', JSON.stringify(reviewBody.data));
+  static syncDB(data) {
+    localStorage.setItem('review', JSON.stringify(data));
     
     window.addEventListener('online', function() {
       const reviewData = JSON.parse(localStorage.getItem('review'));
-      if (reviewBody.name === 'tempReview') DBHelper.postRestaurantReview(reviewData);
-      localStorage.removeItem('review');
+      console.log(reviewData)
+      if (reviewData){
+        DBHelper.postRestaurantReview(reviewData);
+        localStorage.removeItem('review');
+        console.log(reviewData);
+      } else {
+        console.error("We failed to post the offline review, the reviewbody name is wrong");
+      }
     });
   }
 }
