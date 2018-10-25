@@ -38,6 +38,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
+  position: relative;
 }
 #footer {
   background-color: #444;
@@ -267,8 +268,18 @@ nav h1 a {
     .inside {
         width: 100%;
     }
-    #map-container {
-        height: 30%!important;
+
+    .inside #map-container {
+      position: inherit!important;
+    }
+    .form-container__inner {
+      width: 100%!important;
+    }
+    .form-control--rating {
+      width: 75px;
+    }
+    .post-a-review-form {
+      width: 100%!important;
     }
 }
 .restaurant-card--favorite {
@@ -278,6 +289,12 @@ nav h1 a {
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
   border: 2px solid grey;
+}
+#form-submit-button {
+  height: 45px;
+  width: 75px;
+  background-color: orange;
+  color: white;
 }
 .restaurant-is--favorite {
   background: transparent;
