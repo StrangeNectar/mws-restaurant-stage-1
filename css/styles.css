@@ -283,6 +283,11 @@ nav h1 a {
   background: transparent;
   border: 2px solid orange;
 }
+#post-a-review-form {
+  width: 50%;
+  max-height; 750px;
+  margin: 25px;
+}
 .inside #map {
   background-color: #ccc;
   height: 100%;

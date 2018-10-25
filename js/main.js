@@ -144,7 +144,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 /**
  * Handles the click event on the favorite btn.
  */
-function handleFavoriteBTN(element, restaurant) {
+handleFavoriteBTN = (element, restaurant) => {
 
   element.addEventListener('click', function() {
     restaurant.isFavoriteRestaurant = !restaurant.isFavoriteRestaurant;
@@ -155,13 +155,14 @@ function handleFavoriteBTN(element, restaurant) {
   handleFavoriteBtnState(element, restaurant.isFavoriteRestaurant);
 }
 
-function handleFavoriteBtnState(element, isFavoriteRestaurant) {
+handleFavoriteBtnState = (element, isFavoriteRestaurant) => {
+
   if(!isFavoriteRestaurant) {
     element.classList.add("restaurant-is--favorite");
-    console.log(isFavoriteRestaurant);
   } else {
     element.classList.remove("restaurant-is--favorite");
   } 
+
 }
 
 /**

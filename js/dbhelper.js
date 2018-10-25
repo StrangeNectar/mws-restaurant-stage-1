@@ -192,9 +192,6 @@ class DBHelper {
             for (let i = 0; i < thisRestaurantReviews.length; i++) {
               store.put(thisRestaurantReviews[i]);
             }
-            console.log(`${DBHelper.REVIEWS_DATABASE_URL}/?restaurant_id=${restaurauntID}`);
-            console.log(thisRestaurantReviews);
-            console.log(thisRestaurantReviews.lenght);
           } else {
             // This would be used for a single array item
             store.put(thisRestaurantReviews);

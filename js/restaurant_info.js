@@ -70,6 +70,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
+  // TODO: add a way to see whether this restaurant is the users favorite
+
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
@@ -84,7 +86,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
   // fill reviews
   DBHelper.getReviews(restaurant.id).then(res => {
-    fillReviewsHTML();
+    fillReviewsHTML(res);
   });
 }
 
@@ -117,26 +119,20 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
+  console.log(reviews);
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
+    noReviews.className = 'reviews-is--null';
     container.appendChild(noReviews);
     return;
   }
   const ul = document.getElementById('reviews-list');
+  console.log(reviews);
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
-}
-/**
- *  Checks to see wether the element has the information we need from it
- *  Checks to see if the element data is valid
- *  @param {element}
- *  @return {bool}
- */
-const isValidElement = element => {
-  return element.name && element.value;
 }
 
 /**
