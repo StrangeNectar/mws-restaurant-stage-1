@@ -6,11 +6,11 @@
     "background_color": "#fff",
     "description": "A delightful JS website to display restaurants in the area",
     "icons": [{
-      "src": "images/Loading_icon.png",
+      "src": "img/Loading_icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }, {
-      "src": "images/Loading_Icon-192.png",
+      "src": "img/Loading_Icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     }]
