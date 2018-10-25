@@ -75,48 +75,53 @@ class DBHelper {
     });
   }
   
-   /**
-    *   create object store
-    */
-    //static createOS(callback) {
+  /**
+   * get all restaurants in store
+   */
+  static getAllRestaurantsInStore() {
 
-        //const restaurantReviewOS = DBHelper.REVIEWS_OBJECTSTORE; 
-        //const restaurantOS = DBHelper.RESTAURANT_OBJECTSTORE;
+    dbPromise = this.openDB();
 
-        //return idb.open(DBHelper.RESTAURANT_DB_NAME, 1, db => { 
-            //if (!db.objectStoreNames.contains(restaurantReviewOS)) {
-              //console.log('we created the object store with name: ', restaurantReviewOS);
-              //db.createObjectStore(restaurantReviewOS);
-              //db.createObjectStore(restaurantOS);
-            //} else {
-              //console.error('we failed to create the object store');
-            //}
-        //});
-    //}
+    const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE; 
 
-    /**
-     * get all restaurants in store
-     */
-    static getLocalEventData() {
+    return dbPromise.then((db) => {
+      if(!db) {
+         return;
+      } else {
+        const tx = db.transaction(restaurantObjectStore, 'readonly');
+        const store = tx.objectStore(restaurantObjectStore);
 
-      dbPromise = this.openDB();
+        return store.getAll()
+          .then(function(restaurants) {
+            return restaurants; 
+          });
+      }
+    });	
+  }    
+  /**
+   * get all restaurant reviews in store
+   */
+  static getAllReviewsInStore() {
 
-      const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE; 
+    dbPromise = this.openDB();
 
-	    return dbPromise.then((db) => {
-        if(!db) {
-           return;
-        } else {
-          const tx = db.transaction(restaurantObjectStore, 'readonly');
-          const store = tx.objectStore(restaurantObjectStore);
+    const reviewsObjectStore = DBHelper.REVIEWS_OBJECTSTORE; 
 
-          return store.getAll()
-            .then(function(restaurants) {
-              return restaurants; 
-            });
-        }
-      });	
-    }    
+    return dbPromise.then((db) => {
+      if(!db) {
+         return;
+      } else {
+        const tx = db.transaction(reviewsObjectStore, 'readonly');
+        const store = tx.objectStore(reviewsObjectStore);
+
+        return store.getAll()
+          .then(function(reviews) {
+            return reviews; 
+          });
+      }
+    });	
+    return dbPromise;
+  }    
   /**
    * Put restaurants in store
    */
@@ -133,15 +138,6 @@ class DBHelper {
       restaurants.forEach(function(restaurant) {
         store.put(restaurant);
       });
-
-      // We want to delete old entries
-      store.openCursor(null, "prev").then(function(cursor) {
-        return cursor.advance(15);
-      }).then(function removeRemainder(cursor) {
-        if (!cursor) return;
-        cursor.delete();
-        return cursor.continue().then(removeRemainder);
-      });
     });
   }
     
@@ -153,7 +149,7 @@ class DBHelper {
     const DB_URL = DBHelper.DATABASE_URL;
     const restaurantObjectStore = DBHelper.RESTAURANT_OBJECTSTORE;
     
-    DBHelper.getLocalEventData().then(restaurants => {
+    DBHelper.getAllRestaurantsInStore().then(restaurants => {
       if(restaurants.length === 0) {
         fetch(`${DB_URL}/restaurants`).then(res =>  {
           if(res.ok) {
@@ -178,11 +174,16 @@ class DBHelper {
    */
   static getReviews(restaurauntID) {
     return fetch(`${DBHelper.REVIEWS_DATABASE_URL}/?restaurant_id=${restaurauntID}`)
-      .then(res => res.json())
+      .then(res => {
+        return res.json();
+      })
       .then(thisRestaurantReviews => {
         DBHelper.openDB().then(db => {
           // if we don't have a db
-          if (!db) return;
+          if (!db) {
+            console.log("Databse doesnt exist!");
+            return;
+          }
 
           // Otherwise we have the DB so lets interact with it
           const tx = db.transaction('reviews', 'readwrite');
@@ -198,7 +199,7 @@ class DBHelper {
           }
         });
         return Promise.resolve(thisRestaurantReviews);
-        // if our fetch failes ->
+        // if our fetch faile ->
         // likely we are offline so then just fetch the data from our DB
       }).catch(e => {
         return DBHelper.openDB().then(db => {
@@ -402,17 +403,20 @@ class DBHelper {
     }
 
     const { reviewName, reviewRating, reviewComment, restaurant_id } = reviewBody; 
-    const thisReview = { reviewName, reviewRating, reviewComment, restaurant_id };
+    console.log(reviewBody);
 
     // now that we have the data lets post the review to our server
     fetch(DBHelper.REVIEWS_DATABASE_URL, {
       method: 'post',
-      body: JSON.stringify(thisReview),
+      body: JSON.stringify(reviewBody),
       headers: new Headers({
         'Content-Type': 'application/json',
       })
     }).then(res => {
       return res.json();
+      console.log(res.json());
+    }).catch(e => {
+      console.log(e);
     });
   }
   
@@ -427,7 +431,7 @@ class DBHelper {
     
     window.addEventListener('online', function() {
       const reviewData = JSON.parse(localStorage.getItem('review'));
-      if (reviewBody.name === 'tempReview') DBHelper.postRestaurantReview(review.data);
+      if (reviewBody.name === 'tempReview') DBHelper.postRestaurantReview(reviewData);
       localStorage.removeItem('review');
     });
   }

@@ -3,8 +3,6 @@
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(registration) {
-            // If we succeed 
-            console.log('Welp that went well // registered SW // we had a scope of: ', registration.scope);
 
         }, function(err) {
             // If we fail

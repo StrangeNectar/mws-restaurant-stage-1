@@ -119,7 +119,6 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
-  console.log(reviews);
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
@@ -128,7 +127,6 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     return;
   }
   const ul = document.getElementById('reviews-list');
-  console.log(reviews);
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
@@ -137,13 +135,9 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 
 /**
  *  Handle the form submission and convert the data to JSON
- *  @param {event}
  *  @return {void}
  */
 const handleFormSubmit = () => {
-  // We want to avoid the default action of a form submission
-  event.preventDefault();
-
   // Lets build up our post body
   const restaurantID = getParameterByName('id');
   const name = document.getElementById('name').value;
